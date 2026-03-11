@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# macOS
+.DS_Store
+
+# Environment
+.env
+.env.*
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Optional: uncomment if you add a build output folder
+# dist/
+# out/
+
+# Commit only: index.html, *-quiz pages (africa.html, europe.html, etc.), README.md
+*.json
+*.js
+*.geojson
