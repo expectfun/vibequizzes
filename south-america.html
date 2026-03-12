@@ -21,7 +21,7 @@
       margin: 0;
       min-height: 100vh;
       max-height: 100vh;
-      background: #010b26;
+      background: linear-gradient(to bottom, #020311 0%, #010b26 100%);
       color: var(--text);
       font-family: 'Segoe UI', system-ui, sans-serif;
       display: flex;
@@ -33,28 +33,65 @@
     body.mode-2 {
       background: var(--bg);
     }
-    h1 { margin: 0 0 1.25rem; font-size: 2.5rem; font-weight: 600; }
-    .modes { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap; justify-content: center; }
-    .modes button {
-      padding: 0.5rem 1rem;
+    h1 { margin: 0; font-size: 1.6rem; font-weight: 600; }
+    .top-bar {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 0 0.5rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      flex-shrink: 0;
+    }
+    .top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+    .top-title {
+      text-align: center;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    .mode-select {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+    .mode-select select {
       background: var(--bg-soft);
       border: 1px solid var(--border-visible);
       color: var(--text);
-      cursor: pointer;
       border-radius: 6px;
-      font-size: 0.9rem;
+      padding: 0.25rem 1.4rem 0.25rem 0.5rem;
+      font-size: 0.85rem;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      position: relative;
+      background-image:
+        linear-gradient(45deg, transparent 50%, var(--text-dim) 50%),
+        linear-gradient(135deg, var(--text-dim) 50%, transparent 50%);
+      background-position:
+        calc(100% - 12px) 55%,
+        calc(100% - 8px) 55%;
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
     }
-    .modes button:hover { border-color: var(--neon-named); color: var(--neon-named); }
-    .modes button.active {
+    .mode-select select:focus {
+      outline: none;
       border-color: var(--neon-named);
-      color: var(--neon-named);
-      box-shadow: 0 0 12px rgba(0, 245, 255, 0.3);
+      box-shadow: 0 0 8px rgba(0, 245, 255, 0.2);
     }
     .map-wrap {
       width: 100%;
       flex: 1 1 0;
       min-height: 0;
-      background: #010b26;
+      background: transparent;
       border-radius: 12px;
       padding: 0.25rem;
       margin-bottom: 0;
@@ -101,12 +138,25 @@
     }
     .country-label.named { display: block; }
     .country-label.last-named { fill: var(--neon-last); }
+    .input-bar {
+      width: 100%;
+      max-width: 900px;
+      margin: 0.75rem 0;
+      flex-shrink: 0;
+    }
+    .input-bar-top {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.15rem;
+    }
     .input-row {
       display: flex;
       gap: 0.5rem;
-      margin-bottom: 0.25rem;
-      max-width: 400px;
+      max-width: 900px;
       width: 100%;
+      align-items: stretch;
     }
     .input-row input {
       flex: 1;
@@ -134,8 +184,25 @@
     .input-row button:hover { filter: brightness(1.1); }
     #giveup-btn { background: transparent; color: var(--text-dim); border: 1px solid var(--border-visible); white-space: nowrap; }
     #giveup-btn:hover { color: var(--neon-last); border-color: var(--neon-last); }
-    .score { font-size: 1.1rem; margin-bottom: 0; color: var(--text-dim); }
-    .message { min-height: 1em; color: var(--neon-named); font-size: 0.95rem; margin-top: 0.125rem; }
+    .score {
+      font-size: 0.95rem;
+      margin: 0;
+      color: var(--neon-named);
+      background: var(--bg-soft);
+      border: 1px solid var(--neon-named);
+      border-radius: 999px;
+      padding: 0 0.75rem;
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+    }
+    .message {
+      min-height: 1em;
+      color: var(--neon-named);
+      font-size: 0.9rem;
+      margin-top: 0.1rem;
+      text-align: center;
+    }
     .message.error { color: #ff6b6b; }
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
     .back-bar { width: 100%; max-width: 900px; margin: 0 0 0.5rem 0; flex-shrink: 0; }
@@ -144,21 +211,30 @@
   </style>
 </head>
 <body>
-  <div class="back-bar"><a href="index.html" class="back-link">← Quizzes</a></div>
-  <h1>South America Countries</h1>
-  <div class="modes" role="group" aria-label="Game mode">
-    <button type="button" data-mode="1" class="active">By outline</button>
-    <button type="button" data-mode="3">Neighbor chain</button>
-    <button type="button" data-mode="2">Blind</button>
+  <div class="top-bar">
+    <div class="top-row">
+      <a href="index.html" class="back-link">← Quizzes</a>
+      <label class="mode-select" for="mode-select">
+        <select id="mode-select">
+          <option value="1">Default mode</option>
+          <option value="3">Neighbor chain</option>
+          <option value="2">Darkness</option>
+        </select>
+      </label>
+    </div>
+    <h1 class="top-title">South America Countries</h1>
   </div>
-  <label for="country-input" class="sr-only">Country name</label>
-  <div class="input-row">
-    <input type="text" id="country-input" autocomplete="off" placeholder="Enter country..." />
-    <button type="button" id="submit-btn">Check</button>
-    <button type="button" id="giveup-btn">Give up</button>
+
+  <div class="input-bar">
+    <label for="country-input" class="sr-only">Country name</label>
+    <div class="input-row">
+      <span class="score" aria-live="polite">0 / 13</span>
+      <input type="text" id="country-input" autocomplete="off" placeholder="Enter country..." />
+      <button type="button" id="submit-btn">Check</button>
+      <button type="button" id="giveup-btn">Give up</button>
+    </div>
+    <div class="message" id="message" aria-live="polite"></div>
   </div>
-  <div class="message" id="message" aria-live="polite"></div>
-  <div class="score" aria-live="polite">0 / 13</div>
   <div class="map-wrap">
     <svg viewBox="0 0 418 602" preserveAspectRatio="xMidYMid meet" aria-label="South America map">
     <path id="path-Argentina" class="country" data-country="Argentina" d="M116.61341999999996,572.6535469565217 L119.96376811594203,576.6985507246377 L124.32608695652173,583.2420289855072 L135.66811594202895,588.4768115942029 L147.88260869565218,590.6579710144928 L143.95652173913044,595.0202898550725 L135.66811594202895,595.4565217391304 L131.2192486956522,592.3750669565218 L125.96248000000004,592.1412466666667 L116.61917826086962,592.1367971014492 L116.61341999999996,572.6535469565217 Z M212.6618831014493,377.04651579710145 L210.4824337101449,384.02850307246376 L208.14856695652173,392.99697692753625 L208.23399860869563,401.68726571014497 L206.3410750434782,403.62956199999996 L205.66523843478262,409.26798997101446 L205.0687524057971,413.8225649275362 L216.14565710144925,421.2955399130435 L214.95449104347827,427.3099823188406 L220.40627284057967,431.1116210434783 L219.96307869565214,435.3731354202899 L211.57981863768117,446.56072959420294 L198.6437983478261,451.24018028985506 L181.14576971014492,453.05669347826085 L171.56165052173912,452.17796542028987 L173.39551701449275,457.3813218840579 L171.6089904057971,463.9115474202899 L173.2190088695652,468.31147817391303 L167.98589266666664,471.3813640869565 L159.0458262318841,472.5856083768116 L150.65625826086958,469.4088631014493 L147.28902797101443,471.69155985507246 L148.50588808695653,480.361110173913 L154.3963533913043,482.98735698550723 L159.1727435362319,480.23622571014494 L161.77171713043478,484.7682474782609 L153.73855060869562,487.47654950724643 L146.73266655072464,492.901729884058 L145.44997904347827,501.67858452173914 L143.38707336231883,506.3499300289855 L135.1449343188405,506.3747254492754 L128.30631901449271,510.84407814492755 L125.80451171014494,517.3864832753623 L134.38501837681162,523.7742442028986 L142.7261122608696,525.5384531884058 L139.72430469565214,533.3657967826086 L129.41971365217393,538.2869112173913 L123.74949310144933,548.5150831594203 L115.78689144927533,551.957380231884 L112.21158727536236,556.0430582608695 L115.0294533043478,565.1044146086956 L120.83627550724634,570.1549241449276 L117.15840449275362,569.7139896811594 L109.07226197101448,568.3469872753624 L87.98968104347823,567.1801629565217 L84.3724462608696,562.0931233623188 L84.54196597101452,555.5588408695653 L78.73333776811596,556.1210565217391 L75.65961301449273,552.9569357971014 L74.89721055072464,543.7057749565217 L81.59065660869567,539.8685222608696 L84.35711707246381,534.3337866086956 L83.34336652173911,529.921693710145 L87.96827078260866,522.4735141449275 L91.15493597101451,510.92117776811597 L90.21872127536228,505.7994315652174 L94.02734843478258,504.14658385507244 L93.09362026086953,500.85982962318843 L89.04694136231886,499.1118484637681 L91.9222940289855,495.4513307536232 L87.98427176811593,492.1442917391305 L85.9472957101449,482.07887791304347 L89.45542017391307,480.30339669565217 L87.98156713043477,469.6676533043478 L90.03162142028982,460.73209750724635 L92.36322849275363,452.9484817971014 L97.58800394202903,449.78120275362323 L94.93605434782613,441.2644906376812 L94.9076469275362,433.249139826087 L101.51317481159424,427.55164605797097 L101.31006524637685,420.26307501449276 L106.28956495652179,411.74680785507246 L106.31165573913037,403.7228894492754 L104.04654785507246,402.12910753623186 L100.0273690144928,387.0686379710145 L105.40227802898546,378.09385620289856 L104.57743333333337,369.6447774782609 L107.69579333333328,361.71598379710144 L113.40951492753628,353.53291055072464 L119.56643066666669,348.10728521739134 L116.9555130434782,344.68346692753624 L118.77720866666672,341.8750671304348 L118.5010564347826,327.33579869565216 L128.0040190434783,323.03235371014495 L130.99839321739125,313.9678564927537 L129.93887321739132,311.78299782608696 L137.20941915942024,303.8992843478261 L148.62514515942024,306.02418730434783 L153.75410663768116,312.32537365217394 L157.158311942029,305.3068650434783 L167.10762701449272,305.66755028985506 L168.51587950724635,307.5350066376812 L184.55605608695652,321.7708583478261 L191.6893111304348,323.09772742028986 L202.34940498550725,329.54229446376814 L211.33500530434782,332.9525895652174 L212.58748811594202,336.80292049275363 L203.99796017391301,350.0649106956522 L212.79600695652172,352.4395825797102 L222.59428110144927,353.7709622898551 L229.49421315942024,352.36924455072466 L237.4079044927536,345.68572713043477 L238.83441765217393,337.98596391304346 L243.155215942029,336.31418373913044 L247.53237539130433,341.3502714492754 L247.3545149275362,348.31783689855075 L240.00845724637682,353.127590057971 L234.1493308405797,356.67989608695655 L224.30258260869564,365.15017568115945 L212.6618831014493,377.04651579710145 Z"/><text id="label-path-Argentina" class="country-label" data-country="Argentina" x="155.53122808695647" y="405.7057640289855" font-size="8" text-anchor="middle" dominant-baseline="middle">Argentina</text>
@@ -205,6 +281,7 @@
   const giveupBtn = document.getElementById('giveup-btn');
   const scoreEl = document.querySelector('.score');
   const messageEl = document.getElementById('message');
+  const modeSelect = document.getElementById('mode-select');
 
   function setMessage(text, isError) {
     messageEl.textContent = text;
@@ -244,9 +321,7 @@
     state.named = new Set();
     state.lastNamed = null;
     body.className = 'mode-' + mode;
-    document.querySelectorAll('.modes button').forEach(b => {
-      b.classList.toggle('active', parseInt(b.dataset.mode, 10) === mode);
-    });
+    if (modeSelect) modeSelect.value = String(mode);
     updateMap();
     setMessage(START_PROMPT);
     input.focus();
@@ -293,9 +368,12 @@
     input.focus();
   }
 
-  document.querySelectorAll('.modes button').forEach(btn => {
-    btn.addEventListener('click', () => setMode(parseInt(btn.dataset.mode, 10)));
-  });
+  if (modeSelect) {
+    modeSelect.addEventListener('change', () => {
+      const value = parseInt(modeSelect.value, 10);
+      if (value === 1 || value === 2 || value === 3) setMode(value);
+    });
+  }
   submitBtn.addEventListener('click', submit);
   input.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
   giveupBtn.addEventListener('click', function giveUp() {

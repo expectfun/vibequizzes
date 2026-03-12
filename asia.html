@@ -21,7 +21,7 @@
       margin: 0;
       min-height: 100vh;
       max-height: 100vh;
-      background: #010b26;
+      background: linear-gradient(to bottom, #020311 0%, #010b26 100%);
       color: var(--text);
       font-family: 'Segoe UI', system-ui, sans-serif;
       display: flex;
@@ -33,28 +33,65 @@
     body.mode-2 {
       background: var(--bg);
     }
-    h1 { margin: 0 0 1.25rem; font-size: 2.5rem; font-weight: 600; }
-    .modes { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap; justify-content: center; }
-    .modes button {
-      padding: 0.5rem 1rem;
+    h1 { margin: 0; font-size: 1.6rem; font-weight: 600; }
+    .top-bar {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 0 0.5rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      flex-shrink: 0;
+    }
+    .top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+    .top-title {
+      text-align: center;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    .mode-select {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+    .mode-select select {
       background: var(--bg-soft);
       border: 1px solid var(--border-visible);
       color: var(--text);
-      cursor: pointer;
       border-radius: 6px;
-      font-size: 0.9rem;
+      padding: 0.25rem 1.4rem 0.25rem 0.5rem;
+      font-size: 0.85rem;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      position: relative;
+      background-image:
+        linear-gradient(45deg, transparent 50%, var(--text-dim) 50%),
+        linear-gradient(135deg, var(--text-dim) 50%, transparent 50%);
+      background-position:
+        calc(100% - 12px) 55%,
+        calc(100% - 8px) 55%;
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
     }
-    .modes button:hover { border-color: var(--neon-named); color: var(--neon-named); }
-    .modes button.active {
+    .mode-select select:focus {
+      outline: none;
       border-color: var(--neon-named);
-      color: var(--neon-named);
-      box-shadow: 0 0 12px rgba(0, 245, 255, 0.3);
+      box-shadow: 0 0 8px rgba(0, 245, 255, 0.2);
     }
     .map-wrap {
       width: 100%;
       flex: 1 1 0;
       min-height: 0;
-      background: #010b26;
+      background: transparent;
       border-radius: 12px;
       padding: 0.25rem;
       margin-bottom: 0;
@@ -101,12 +138,25 @@
     }
     .country-label.named { display: block; }
     .country-label.last-named { fill: var(--neon-last); }
+    .input-bar {
+      width: 100%;
+      max-width: 900px;
+      margin: 0.75rem 0;
+      flex-shrink: 0;
+    }
+    .input-bar-top {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.15rem;
+    }
     .input-row {
       display: flex;
       gap: 0.5rem;
-      margin-bottom: 0.25rem;
-      max-width: 400px;
+      max-width: 900px;
       width: 100%;
+      align-items: stretch;
     }
     .input-row input {
       flex: 1;
@@ -134,8 +184,25 @@
     .input-row button:hover { filter: brightness(1.1); }
     #giveup-btn { background: transparent; color: var(--text-dim); border: 1px solid var(--border-visible); white-space: nowrap; }
     #giveup-btn:hover { color: var(--neon-last); border-color: var(--neon-last); }
-    .score { font-size: 1.1rem; margin-bottom: 0; color: var(--text-dim); }
-    .message { min-height: 1em; color: var(--neon-named); font-size: 0.95rem; margin-top: 0.125rem; }
+    .score {
+      font-size: 0.95rem;
+      margin: 0;
+      color: var(--neon-named);
+      background: var(--bg-soft);
+      border: 1px solid var(--neon-named);
+      border-radius: 999px;
+      padding: 0 0.75rem;
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+    }
+    .message {
+      min-height: 1em;
+      color: var(--neon-named);
+      font-size: 0.9rem;
+      margin-top: 0.1rem;
+      text-align: center;
+    }
     .message.error { color: #ff6b6b; }
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
     .back-bar { width: 100%; max-width: 900px; margin: 0 0 0.5rem 0; flex-shrink: 0; }
@@ -144,21 +211,30 @@
   </style>
 </head>
 <body>
-  <div class="back-bar"><a href="index.html" class="back-link">← Quizzes</a></div>
-  <h1>Asia Countries</h1>
-  <div class="modes" role="group" aria-label="Game mode">
-    <button type="button" data-mode="1" class="active">By outline</button>
-    <button type="button" data-mode="3">Neighbor chain</button>
-    <button type="button" data-mode="2">Blind</button>
+  <div class="top-bar">
+    <div class="top-row">
+      <a href="index.html" class="back-link">← Quizzes</a>
+      <label class="mode-select" for="mode-select">
+        <select id="mode-select">
+          <option value="1">Default mode</option>
+          <option value="3">Neighbor chain</option>
+          <option value="2">Darkness</option>
+        </select>
+      </label>
+    </div>
+    <h1 class="top-title">Asia Countries</h1>
   </div>
-  <label for="country-input" class="sr-only">Country name</label>
-  <div class="input-row">
-    <input type="text" id="country-input" autocomplete="off" placeholder="Enter country..." />
-    <button type="button" id="submit-btn">Check</button>
-    <button type="button" id="giveup-btn">Give up</button>
+
+  <div class="input-bar">
+    <label for="country-input" class="sr-only">Country name</label>
+    <div class="input-row">
+      <span class="score" aria-live="polite">0 / 46</span>
+      <input type="text" id="country-input" autocomplete="off" placeholder="Enter country..." />
+      <button type="button" id="submit-btn">Check</button>
+      <button type="button" id="giveup-btn">Give up</button>
+    </div>
+    <div class="message" id="message" aria-live="polite"></div>
   </div>
-  <div class="message" id="message" aria-live="polite"></div>
-  <div class="score" aria-live="polite">0 / 46</div>
   <div class="map-wrap">
     <svg viewBox="0 0 933 520" preserveAspectRatio="xMidYMid meet" aria-label="Asia map">
     <path id="path-Kazakhstan" class="country" data-country="Kazakhstan" d="M478.3309250213414,55.037668257031896 L472.48813964589124,60.14821912867467 L466.1130440801321,60.86537832910676 L465.74653152368484,68.56254883276887 L461.4772885066443,72.03211762326549 L446.2499579121703,69.50619834719896 L440.71141119485645,83.24883415789071 L436.7825062003989,84.9576474284089 L421.5769826002675,88.02421283137596 L428.48598492614326,101.35829563929337 L423.21994504204037,103.35626458875623 L423.83278222201807,107.7320095581037 L419.1018311737547,106.60609010785515 L415.2526548840622,103.84733261764222 L403.8633936729752,103.04448827893242 L391.1365984297907,102.83466216230079 L388.34729119037553,103.67993841397293 L377.4161687558935,100.45272584993688 L373.0596670582169,102.04213412080918 L371.8657245231867,106.57376724506844 L359.23808547603136,103.92944082548564 L354.1846580299069,105.01251386868722 L352.4655361379871,108.3755883826932 L348.06460681508867,109.79443233773026 L337.94068090720526,115.1449676085715 L334.58217350394676,120.6374978066724 L331.7222641054455,120.68628529559948 L329.618783383989,117.05051205297286 L319.8566110263958,116.801408783912 L318.29536532583097,110.51338000337938 L314.55527006274997,110.45963393706921 L315.12803948121103,102.76068264400641 L305.93864421789533,97.1541051660945 L292.7743351167256,97.75286489882672 L283.7745401938737,98.870448412484 L276.4442890649272,91.95192807429396 L270.1628000799525,89.04878080211012 L258.2654151759776,83.55307281602694 L256.8310967751135,82.88688871219091 L237.07193348515406,87.42288170015553 L237.37339349775982,115.72527467872027 L233.43616024252742,116.09972402930708 L228.06381030152716,110.0810242940031 L222.8755187615625,107.93073644424629 L214.16250769039306,109.52788193803201 L210.77107871067008,112.08176421318001 L210.3403042194686,110.2101315255565 L212.22681263924133,107.01128110305376 L210.7631419165306,104.33700364794646 L201.86687840504564,101.72202955021027 L198.4040489813328,94.82869356557131 L194.16574718013015,92.88685018549717 L193.90871479274625,90.38591569175554 L201.3762095186116,91.11498008339686 L201.67093016443354,85.50285299024046 L208.19914291539047,84.25635414043944 L214.90386106406268,85.40269126226542 L216.28543125474636,77.91417247532843 L214.9181457583505,73.16775465705439 L207.23684884296736,73.53902621965881 L200.71180620417636,71.66560506681822 L191.82427009591834,75.04077666744308 L184.6633244489203,76.6500883301951 L180.7647005500918,75.40883206298332 L181.543673099852,71.45894906235253 L176.6504629690793,66.33041375292555 L170.95493045511083,66.54472254632452 L164.43974356455493,61.33820094245152 L168.87042435175184,55.520799491778234 L166.62850260602085,53.95518625169177 L172.75291368454435,45.52182819878544 L180.64642389545406,49.973325800011594 L181.60237774354528,44.36715514036803 L197.44730452415425,36.01867626501917 L209.4375130756425,35.819949378876686 L226.35619445836463,41.13477675190654 L235.44483695584384,44.23987475311367 L243.58918517031682,41.00190837032574 L255.7579639141273,40.84770121920161 L265.5750413863044,44.82529391697312 L267.80505794082615,42.5474800538376 L278.58664012054453,42.878491959515884 L280.51003851385155,39.24330975475078 L268.0716160163407,33.9641826037157 L275.438365652186,30.225077520948048 L274.00086946333954,28.1338934573364 L281.36959945981147,26.138104439726135 L275.8282740969671,20.880193245172336 L279.34789688609396,18.260767173934312 L308.0702951854755,15.589751940789597 L311.81867265443327,13.693656426355119 L331.0253306811813,10.860190215291482 L337.9264038887339,7.675816382486005 L351.7206135096996,9.330077625973956 L354.13745175915466,17.285669839785157 L362.15114990298133,15.417606406779555 L372.00970748688945,18.0353514742298 L371.37386588521343,22.22486578650546 L378.7360560861275,21.787037220048433 L397.9738011692246,14.543568871122261 L395.1650587627289,16.950098499175624 L404.9573817270726,22.88034212648779 L422.11009875129673,42.37433666369782 L426.2004415159106,38.3553943430739 L436.77417793962405,42.777739193679395 L447.80446424595135,40.805154168993454 L452.0423669047021,42.18631754140881 L455.73644564857005,46.62175733476295 L461.10324597432583,48.11161026715433 L464.37091776651397,51.36956447580218 L474.2580370631813,50.342417430763476 L478.3309250213414,55.037668257031896 Z"/><text id="label-path-Kazakhstan" class="country-label" data-country="Kazakhstan" x="334.98949070028345" y="56.27218515745989" font-size="7" text-anchor="middle" dominant-baseline="middle">Kazakhstan</text>
@@ -238,6 +314,7 @@
   const giveupBtn = document.getElementById('giveup-btn');
   const scoreEl = document.querySelector('.score');
   const messageEl = document.getElementById('message');
+  const modeSelect = document.getElementById('mode-select');
 
   function setMessage(text, isError) {
     messageEl.textContent = text;
@@ -277,9 +354,7 @@
     state.named = new Set();
     state.lastNamed = null;
     body.className = 'mode-' + mode;
-    document.querySelectorAll('.modes button').forEach(b => {
-      b.classList.toggle('active', parseInt(b.dataset.mode, 10) === mode);
-    });
+    if (modeSelect) modeSelect.value = String(mode);
     updateMap();
     setMessage(START_PROMPT);
     input.focus();
@@ -326,9 +401,12 @@
     input.focus();
   }
 
-  document.querySelectorAll('.modes button').forEach(btn => {
-    btn.addEventListener('click', () => setMode(parseInt(btn.dataset.mode, 10)));
-  });
+  if (modeSelect) {
+    modeSelect.addEventListener('change', () => {
+      const value = parseInt(modeSelect.value, 10);
+      if (value === 1 || value === 2 || value === 3) setMode(value);
+    });
+  }
   submitBtn.addEventListener('click', submit);
   input.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
   giveupBtn.addEventListener('click', function giveUp() {

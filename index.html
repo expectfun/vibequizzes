@@ -6,8 +6,8 @@
   <title>vibe quizzes</title>
   <style>
     :root {
-      --bg: #0a0a0f;
-      --bg-soft: #12121a;
+      --bg: #050718;
+      --bg-soft: #101322;
       --neon: #00f5ff;
       --neon-dim: rgba(0, 245, 255, 0.5);
       --border: rgba(255, 255, 255, 0.2);
@@ -20,8 +20,8 @@
       min-height: 100vh;
       background: var(--bg);
       background-image:
-        radial-gradient(ellipse 90% 60% at 50% 0%, rgba(0, 245, 255, 0.04) 0%, transparent 55%),
-        radial-gradient(ellipse 70% 50% at 100% 100%, rgba(0, 245, 255, 0.025) 0%, transparent 50%),
+        radial-gradient(ellipse 90% 60% at 50% 100%, rgba(0, 245, 255, 0.04) 0%, transparent 55%),
+        radial-gradient(ellipse 70% 50% at 100% 0%, rgba(0, 245, 255, 0.025) 0%, transparent 50%),
         linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
       background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
@@ -41,10 +41,22 @@
       color: var(--text);
     }
     .tagline {
-      margin: 0 0 1.5rem;
+      margin: 0 0 2rem;
       font-size: 0.95rem;
       color: var(--text-dim);
       font-weight: 400;
+    }
+    .disclaimer {
+      max-width: 360px;
+      width: 100%;
+      margin: 1.5rem 0 0;
+      padding: 0.85rem 1.1rem;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      color: var(--text-dim);
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 10px;
     }
     .quizzes {
       display: flex;
@@ -81,8 +93,16 @@
   <p class="tagline">Geography quizzes on the map.</p>
   <nav class="quizzes">
     <a href="africa.html">Countries of Africa</a>
-    <a href="south-america.html">Countries of South America</a>
     <a href="asia.html">Countries of Asia</a>
+    <a href="south-america.html">Countries of South America</a>
   </nav>
+  <p class="disclaimer">
+    These quizzes are inspired by 
+    <a href="https://www.sporcle.com/" target="_blank" rel="noreferrer">Sporcle</a>,
+    but the game modes are different.
+    Borders in the world are sometimes disputed; these maps use a snapshot of the
+    <a href="https://www.naturalearthdata.com/downloads/110m-cultural-vectors/110m-admin-0-countries/" target="_blank" rel="noreferrer">Natural Earth</a>
+    dataset.
+  </p>
 </body>
 </html>

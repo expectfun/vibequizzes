@@ -21,7 +21,7 @@
       margin: 0;
       min-height: 100vh;
       max-height: 100vh;
-      background: #010b26;
+      background: linear-gradient(to bottom, #020311 0%, #010b26 100%);
       color: var(--text);
       font-family: 'Segoe UI', system-ui, sans-serif;
       display: flex;
@@ -33,34 +33,65 @@
     body.mode-2 {
       background: var(--bg);
     }
-    h1 { margin: 0 0 1.25rem; font-size: 2.5rem; font-weight: 600; }
-    .modes {
+    h1 { margin: 0; font-size: 1.6rem; font-weight: 600; }
+    .top-bar {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 0 0.5rem 0;
       display: flex;
-      gap: 0.5rem;
-      margin-bottom: 0.5rem;
-      flex-wrap: wrap;
-      justify-content: center;
+      flex-direction: column;
+      gap: 0.35rem;
+      flex-shrink: 0;
     }
-    .modes button {
-      padding: 0.5rem 1rem;
+    .top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+    .top-title {
+      text-align: center;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    .mode-select {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+    .mode-select select {
       background: var(--bg-soft);
       border: 1px solid var(--border-visible);
       color: var(--text);
-      cursor: pointer;
       border-radius: 6px;
-      font-size: 0.9rem;
+      padding: 0.25rem 1.4rem 0.25rem 0.5rem;
+      font-size: 0.85rem;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      position: relative;
+      background-image:
+        linear-gradient(45deg, transparent 50%, var(--text-dim) 50%),
+        linear-gradient(135deg, var(--text-dim) 50%, transparent 50%);
+      background-position:
+        calc(100% - 12px) 55%,
+        calc(100% - 8px) 55%;
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
     }
-    .modes button:hover { border-color: var(--neon-named); color: var(--neon-named); }
-    .modes button.active {
+    .mode-select select:focus {
+      outline: none;
       border-color: var(--neon-named);
-      color: var(--neon-named);
-      box-shadow: 0 0 12px rgba(0, 245, 255, 0.3);
+      box-shadow: 0 0 8px rgba(0, 245, 255, 0.2);
     }
     .map-wrap {
       width: 100%;
       flex: 1 1 0;
       min-height: 0;
-      background: #010b26;
+      background: transparent;
       border-radius: 12px;
       padding: 0.25rem;
       margin-bottom: 0;
@@ -108,12 +139,25 @@
     .country-label.named { display: block; }
     .country-label.named { fill: var(--neon-named); }
     .country-label.last-named { fill: var(--neon-last); }
+    .input-bar {
+      width: 100%;
+      max-width: 900px;
+      margin: 0.75rem 0;
+      flex-shrink: 0;
+    }
+    .input-bar-top {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.15rem;
+    }
     .input-row {
       display: flex;
       gap: 0.5rem;
-      margin-bottom: 0.25rem;
-      max-width: 400px;
+      max-width: 900px;
       width: 100%;
+      align-items: stretch;
     }
     .input-row input {
       flex: 1;
@@ -141,8 +185,25 @@
     .input-row button:hover { filter: brightness(1.1); }
     #giveup-btn { background: transparent; color: var(--text-dim); border: 1px solid var(--border-visible); white-space: nowrap; }
     #giveup-btn:hover { color: var(--neon-last); border-color: var(--neon-last); }
-    .score { font-size: 1.1rem; margin-bottom: 0; color: var(--text-dim); }
-    .message { min-height: 1em; color: var(--neon-named); font-size: 0.95rem; margin-top: 0.125rem; }
+    .score {
+      font-size: 0.95rem;
+      margin: 0;
+      color: var(--neon-named);
+      background: var(--bg-soft);
+      border: 1px solid var(--neon-named);
+      border-radius: 999px;
+      padding: 0 0.75rem;
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+    }
+    .message {
+      min-height: 1em;
+      color: var(--neon-named);
+      font-size: 0.9rem;
+      margin-top: 0.1rem;
+      text-align: center;
+    }
     .message.error { color: #ff6b6b; }
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
     .back-bar { width: 100%; max-width: 900px; margin: 0 0 0.5rem 0; flex-shrink: 0; }
@@ -151,21 +212,31 @@
   </style>
 </head>
 <body>
-  <div class="back-bar"><a href="index.html" class="back-link">← Quizzes</a></div>
-  <h1>Africa Countries</h1>
-  <div class="modes" role="group" aria-label="Game mode">
-    <button type="button" data-mode="1" class="active">By outline</button>
-    <button type="button" data-mode="3">Neighbor chain</button>
-    <button type="button" data-mode="2">Blind</button>
+  <div class="top-bar">
+    <div class="top-row">
+      <a href="index.html" class="back-link">← Quizzes</a>
+      <label class="mode-select" for="mode-select">
+       
+        <select id="mode-select">
+          <option value="1">Default mode</option>
+          <option value="3">Neighbor chain</option>
+          <option value="2">Darkness</option>
+        </select>
+      </label>
+    </div>
+    <h1 class="top-title">Africa Countries</h1>
   </div>
-  <label for="country-input" class="sr-only">Country name</label>
-  <div class="input-row">
-    <input type="text" id="country-input" autocomplete="off" placeholder="Enter country..." />
-    <button type="button" id="submit-btn">Check</button>
-    <button type="button" id="giveup-btn">Give up</button>
+
+  <div class="input-bar">
+    <label for="country-input" class="sr-only">Country name</label>
+    <div class="input-row">
+      <span class="score" aria-live="polite">0 / 51</span>
+      <input type="text" id="country-input" autocomplete="off" placeholder="Enter country..." />
+      <button type="button" id="submit-btn">Check</button>
+      <button type="button" id="giveup-btn">Give up</button>
+    </div>
+    <div class="message" id="message" aria-live="polite"></div>
   </div>
-  <div class="message" id="message" aria-live="polite"></div>
-  <div class="score" aria-live="polite">0 / 51</div>
   <div class="map-wrap">
     <svg viewBox="-4 -8 514 536" preserveAspectRatio="xMidYMid meet" aria-label="Africa map">
     <path id="path-United-Republic-of-Tanzania" class="country" data-country="United Republic of Tanzania" d="M374.860135,274.08333333333337 L376.08003333333335,274.8764777777778 L402.2683166666667,289.5893722222222 L402.7609444444444,293.77919999999995 L413.1271444444444,300.99889444444443 L409.79278888888894,309.8979722222222 L410.2205611111111,313.99087777777777 L414.84444444444443,316.6222222222222 L415.06111111111113,318.5 L413.0727611111111,322.8615 L413.4868833333333,325.05640555555556 L413.0137555555556,328.5064611111111 L415.53589999999997,333.0337833333333 L418.5248888888889,340.15511111111107 L421.17534333333333,341.7345966666667 L421.1753722222222,341.7346111111111 L415.42944444444447,345.9219111111111 L407.53235611111114,348.7264588888889 L403.1996222222222,348.6079277777778 L400.62598333333335,350.7743777777778 L395.5983127777778,350.960545 L393.71281444444446,351.8734411111111 L385.03398555555555,349.8382766666667 L379.59992055555557,350.4223666666667 L377.5777777777778,340.6 L375.12827444444446,337.23208999999997 L373.67575555555555,335.2349722222222 L366.5954861111111,333.88765944444447 L362.49680277777776,331.71925944444445 L357.9069577777778,330.5036872222222 L355.0282016666667,329.29418166666665 L352.01118333333335,327.4555988888889 L352.01121944444446,327.45560611111114 L348.1110894444444,318.3554183333333 L343.9224533333333,314.3112194444444 L342.47772722222226,310.122215 L343.1999061111111,306.366515 L341.8999855555556,299.72209944444444 L344.8864755555556,299.37836500000003 L347.50675555555557,296.76197777777776 L350.31778888888886,292.99530000000004 L352.0995111111111,291.48390555555557 L352.03285,289.13668333333334 L350.47754444444445,287.49947777777777 L350.0587566666667,284.6556194444444 L350.0587277777778,284.65543888888885 L352.1433427777778,283.74125000000004 L352.56097500000004,279.4921566666667 L349.69353611111114,275.41698166666663 L352.22676666666666,274.54952777777777 L360.1445611111111,274.6420444444444 L374.860135,274.08333333333337 Z"/><text id="label-path-United-Republic-of-Tanzania" class="country-label" data-country="United Republic of Tanzania" x="382.48298833333337" y="310.9301433333333" font-size="7" text-anchor="middle" dominant-baseline="middle">Tanzania</text>
@@ -250,6 +321,7 @@
   const giveupBtn = document.getElementById('giveup-btn');
   const scoreEl = document.querySelector('.score');
   const messageEl = document.getElementById('message');
+  const modeSelect = document.getElementById('mode-select');
 
   function setMessage(text, isError) {
     messageEl.textContent = text;
@@ -289,9 +361,7 @@
     state.named = new Set();
     state.lastNamed = null;
     body.className = 'mode-' + mode;
-    document.querySelectorAll('.modes button').forEach(b => {
-      b.classList.toggle('active', parseInt(b.dataset.mode, 10) === mode);
-    });
+    if (modeSelect) modeSelect.value = String(mode);
     updateMap();
     setMessage(START_PROMPT);
     input.focus();
@@ -338,9 +408,12 @@
     input.focus();
   }
 
-  document.querySelectorAll('.modes button').forEach(btn => {
-    btn.addEventListener('click', () => setMode(parseInt(btn.dataset.mode, 10)));
-  });
+  if (modeSelect) {
+    modeSelect.addEventListener('change', () => {
+      const value = parseInt(modeSelect.value, 10);
+      if (value === 1 || value === 2 || value === 3) setMode(value);
+    });
+  }
   submitBtn.addEventListener('click', submit);
   input.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
   giveupBtn.addEventListener('click', function giveUp() {
