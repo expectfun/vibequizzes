@@ -21,7 +21,7 @@
       margin: 0;
       min-height: 100vh;
       max-height: 100vh;
-      background: var(--bg);
+      background: #010b26;
       color: var(--text);
       font-family: 'Segoe UI', system-ui, sans-serif;
       display: flex;
@@ -29,6 +29,9 @@
       align-items: center;
       padding: 0.5rem 1rem;
       overflow: hidden;
+    }
+    body.mode-2 {
+      background: var(--bg);
     }
     h1 { margin: 0 0 1.25rem; font-size: 2.5rem; font-weight: 600; }
     .modes { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap; justify-content: center; }
@@ -51,13 +54,16 @@
       width: 100%;
       flex: 1 1 0;
       min-height: 0;
-      background: var(--bg);
+      background: #010b26;
       border-radius: 12px;
       padding: 0.25rem;
       margin-bottom: 0;
       display: flex;
       align-items: stretch;
       justify-content: stretch;
+    }
+    body.mode-2 .map-wrap {
+      background: var(--bg);
     }
     .map-wrap svg {
       width: 100%;
@@ -142,8 +148,8 @@
   <h1>Asia Countries</h1>
   <div class="modes" role="group" aria-label="Game mode">
     <button type="button" data-mode="1" class="active">By outline</button>
-    <button type="button" data-mode="2">Blind</button>
     <button type="button" data-mode="3">Neighbor chain</button>
+    <button type="button" data-mode="2">Blind</button>
   </div>
   <label for="country-input" class="sr-only">Country name</label>
   <div class="input-row">
@@ -224,6 +230,7 @@
   }
 
   let state = { named: new Set(), lastNamed: null, mode: 1 };
+  const START_PROMPT = 'Name any Asian country to start';
 
   const body = document.body;
   const input = document.getElementById('country-input');
@@ -274,7 +281,7 @@
       b.classList.toggle('active', parseInt(b.dataset.mode, 10) === mode);
     });
     updateMap();
-    setMessage(mode === 3 ? 'Name any Asian country to start' : '');
+    setMessage(START_PROMPT);
     input.focus();
   }
 
@@ -334,8 +341,7 @@
     giveupBtn.disabled = true;
   });
 
-  body.className = 'mode-1';
-  updateMap();
+  setMode(1);
 })();
   </script>
 </body>
