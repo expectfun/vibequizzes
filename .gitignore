@@ -22,7 +22,8 @@ npm-debug.log*
 # dist/
 # out/
 
-# Commit only: index.html, *-quiz pages (africa.html, europe.html, etc.), README.md
+# Commit only: index.html, *-quiz pages (africa.html, etc.), README.md
+europe.html
 *.json
 *.js
 *.geojson
